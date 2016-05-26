@@ -8,14 +8,15 @@
 // @match       http://apc.aptilo.com/cgi-bin/restart*
 // @downloadURL https://ums.fulba.com/files/utmwifi.user.js
 // @description Automates 'brute-force' login process on "4G WiFi by Yes @ UTM" wifi connections
-// @author      mfaizsyahmi
-// @version     0.5.0_test
-// @grant       none
+// @author      mfaizsyahmi	
+// @version     0.4.3
+// @grant       GM_getValue
+// @grant       GM_setValue
 // ==/UserScript==
 /*jshint multistr: true */
 
 /* MFS'S UTM WIFI AUTO LOGIN SCRIPT
- * Copyright(c) 2014-2015 mfaizsyahmi
+ * Copyright(c) 2014 mfaizsyahmi
  * Released under MIT License
  */
 
@@ -23,13 +24,13 @@
 var loginpath = '/pas/parsed/utm1/index_desktop.html',
 	limitpath = '/apc/limit.phtml',
 	invpath = '/apc/start',
-	errpath = '/apc/error.phtml',
+	errpath = '/apc/error.phtml'
 	restartURL = 'http://apc.aptilo.com/cgi-bin/restart';
 	
 // delays
 // -added compatibility with non-GM extensions
-var loginDelay = (typeof GM_getValue == 'undefined') ? 300 : GM_getValue('loginDelay', 300),
-	backDelay = (typeof GM_getValue == 'undefined') ? 300 : GM_getValue('backDelay', 300);
+var loginDelay = (typeof GM_getValue == 'undefined') ? 30 : GM_getValue('loginDelay', 30),
+	backDelay = (typeof GM_getValue == 'undefined') ? 30 : GM_getValue('backDelay', 30);
 
 // keydown handler
 // used to escape the automation
@@ -37,12 +38,13 @@ var aborting;
 document.onkeydown = function(evt) {
     evt = evt || window.event;
     if (evt.ctrlKey) {
-        aborting = true;
+        aborting=true;
     }
 };
 
 document.addEventListener("DOMContentLoaded", function(e) { 
 	if (window.location.pathname == loginpath) {
+		
 		/* SCRIPT FOR THE LOGIN PAGE
 		 * What it does: Closes the popup, checks the checkbox, hits the login button
 		 */
@@ -65,13 +67,13 @@ document.addEventListener("DOMContentLoaded", function(e) {
 The login page returns an error.\n\n\
 Please open a new tab (important!) and try again. Hold down your Ctrl key to stop the automation, \
 then check that you have typed the correct login details, and that you haven\'t exceeded the 20GB quota.');
-				// don't check the checkbox here since it removes the error message, making users unaware of it.
+				// we don't check the checkbox here since it removes the error message, making users unaware of it.
 				
 			} else { // no error message
 				// check the checkbox (or it'd forget your login details)
 				document.getElementById('checker').checked = true;
-				// equivalent to pressing the login button
-				checkFields();
+				// press the login button
+				checkFields();	
 			}
 		}, loginDelay);
 	} else if (window.location.pathname == limitpath) {
@@ -79,14 +81,14 @@ then check that you have typed the correct login details, and that you haven\'t 
 		 * What it does: hit the back button
 		 */
 		var greet = [
-			'mfaizsyahmi says hi! Wanna give him a hug? :3',
-			'Add me on Steam! My id is "kimilil" :3',
-			'Be sure to keep this script updated! :3',
-			'Recommended for use with Greasemonkey on Firefox! :3',
-			'"Do I provide tehnical support? NO!" --mfaizsyahmi :3',
-			'Released under the MIT License. Google them! :3'
+			'<p style="color:green">>> mfaizsyahmi says hi! Wanna give him a hug? :3</p>',
+			'<p style="color:green">>> Add me on Steam! My id is "kimilil" :3</p>',
+			'<p style="color:green">>> Be sure to keep this script updated! :3</p>',
+			'<p style="color:green">>> Recommended for use with Greasemonkey on Firefox! :3</p>',
+			'<p style="color:green">>> "Do I provide tehnical support? NO!" --mfaizsyahmi :3</p>',
+			'<p style="color:green">>> Released under the MIT License. Google them! :3</p>'
 		];
-		document.body.innerHTML += '<p style="color:green">>> ' + greet[Math.floor(Math.random() *( greet.length ))] + '</p>';
+		document.body.innerHTML += greet[Math.floor(Math.random() *( greet.length ))];
 		setTimeout( function() { if(!aborting) {window.history.back(1);} }, backDelay);
 	} else if (window.location.pathname == invpath || window.location.pathname == errpath || window.location.pathname == '/cgi-bin/restart') {
 		/* SCRIPT FOR THE 'INVALID SESSION KEY' PAGE
