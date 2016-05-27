@@ -6,10 +6,12 @@
 // @match       https://apc.aptilo.com/apc/limit.phtml*
 // @match       https://apc.aptilo.com/apc/error.phtml*
 // @match       http://apc.aptilo.com/cgi-bin/restart*
-// @downloadURL https://ums.fulba.com/files/utmwifi.user.js
+// @require     http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js
+// @downloadURL https://github.com/mfaizsyahmi/utmwifi/raw/master/utmwifi.user.js
+// @updateURL   https://github.com/mfaizsyahmi/utmwifi/raw/master/utmwifi.user.js
 // @description Automates 'brute-force' login process on "4G WiFi by Yes @ UTM" wifi connections
 // @author      mfaizsyahmi	
-// @version     0.4.3
+// @version     0.5.0
 // @grant       GM_getValue
 // @grant       GM_setValue
 // ==/UserScript==
@@ -29,12 +31,12 @@ var loginpath = '/pas/parsed/utm1/index_desktop.html',
 	
 // delays
 // -added compatibility with non-GM extensions
-var loginDelay = (typeof GM_getValue == 'undefined') ? 30 : GM_getValue('loginDelay', 30),
-	backDelay = (typeof GM_getValue == 'undefined') ? 30 : GM_getValue('backDelay', 30);
+loginDelay = (GM_getValue) ? Number(GM_getValue('loginDelay', 30)) : 30;
+backDelay = (GM_getValue) ? Number(GM_getValue('backDelay', 30)) : 30;
 
 // keydown handler
 // used to escape the automation
-var aborting;
+aborting;
 document.onkeydown = function(evt) {
     evt = evt || window.event;
     if (evt.ctrlKey) {
@@ -52,12 +54,12 @@ document.addEventListener("DOMContentLoaded", function(e) {
 		var l = document.getElementById('light1');
 		l.innerHTML += '<hr/><p>MFS AUTO LOGIN IS RUNNING. Hold down Ctrl to stop automation.</p>';
 		
-		setTimeout( function() {
+		setTimeout( function(e) {
 			// close the popup
 			Close1Window();
 			
 			// abort if ctrl key is pressed
-			if (aborting) return;
+			if (aborting) {return false} else {
 			
 			// check if page returns an error message
 			var pageErr = document.getElementById('error-user').innerHTML;
@@ -74,7 +76,7 @@ then check that you have typed the correct login details, and that you haven\'t 
 				document.getElementById('checker').checked = true;
 				// press the login button
 				checkFields();	
-			}
+			}}
 		}, loginDelay);
 	} else if (window.location.pathname == limitpath) {
 		/* SCRIPT FOR THE "LIMIT REACHED" PAGE
